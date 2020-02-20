@@ -1,6 +1,11 @@
 #### Connexió a una SGBD MySQL
 Codi molt simple per veure les funcions bàsiques de connexió a un SGBD MySQL i  realitzar les operacioins d'INSERT i SELECT 
+
 Els exemples estan contextualitzats a la BD rrhh.
+
+Podeu trobar més informació:
+- Instal·lació: https://dev.mysql.com/doc/connector-python/en/connector-python-installation.html
+- Exemples: https://dev.mysql.com/doc/connector-python/en/connector-python-examples.html
 
 **INSERT**
 ```python
@@ -96,6 +101,12 @@ except OSError as e:
 
 #### Llegir un fitxer .xls
 Exemple de lectura d'un fixer XLS. l'exemple està basat en el fitxer que es troba dins d'algun dels fitxers .zip de `<Resultados Eleccions Generales - 02_199306_1.zip>` : <https://github.com/robertventura/databases/tree/master/db_eleccions_generals/data/resultats_x_municipi>
+
+Podeu trobar més informació a:
+- https://www.datacamp.com/community/tutorials/python-excel-tutorial
+- Documentació oficial de openpyxl https://openpyxl.readthedocs.io/en/stable/- 
+- Documentació oficial de Pandas https://pandas.pydata.org/docs/
+
 ```python
 import os
 import pandas as pd # pip install pandas / pip install xlrd
