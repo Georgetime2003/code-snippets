@@ -58,3 +58,79 @@ cursor.close()
 cnx.close()
     
 ```
+#### Descomprimir un fitxer comprimit .zip
+Exemple de lectura d'un fixer pla per només lectura.
+```python
+import zipfile
+import os
+
+dirActual = os.path.dirname(__file__)
+print (dirActual)
+nomFitxerZip = "prova.zip"
+dirUnzip = os.path.join(os.path.dirname(__file__) , "unzip")
+pathFitxerZip = os.path.join(dirActual,nomFitxerZip)
+print (dirUnzip)
+
+# Extraiem el contingut de pathFitxerZip a dirUnzip
+with zipfile.ZipFile(pathFitxerZip, 'r') as zipRef:
+zipRef.extractall(dirUnzip)
+```
+
+#### Llegir un fitxer pla
+Exemple de lectura d'un fixer pla per només lectura.
+```python
+import sys
+
+# Nom o path del fitxer
+pathFitxer = "00021911.DAT"
+
+try :
+    # Intentem obrir el fitxer en només lectura
+    with open(pathFitxer, "r") as fitxer:
+        for linia in fitxer:
+            # Tractem la línia del fitxer
+            print(linia)
+except OSError as e:
+    print("No s'ha pogut obrir el fitxer " + nomFitxer)
+```
+
+#### Llegir un fitxer .xls
+Exemple de lectura d'un fixer XLS. l'exemple està basat en el fitxer que es troba dins d'algun dels fitxers .zip de `<Resultados Eleccions Generales - 02_199306_1.zip>` : <https://github.com/robertventura/databases/tree/master/db_eleccions_generals/data/resultats_x_municipi>
+```python
+import os
+import pandas as pd # pip install pandas / pip install xlrd
+import openpyxl as xl
+
+#Tractar un fitxer Excel
+dirActual = os.path.dirname(__file__)
+nomFitxerXls = "02_201904_1.xlsx"
+pathFitxerXls = os.path.join(dirActual,nomFitxerXls)
+
+wb = xl.load_workbook(pathFitxerXls, read_only=True)
+sheet = wb.get_sheet_by_name("Municipios")
+#print (sheet.max_row) #retorna la quantiat màxima de files
+#print (sheet.max_column) #retorna la quantitat màixma de columnes
+"""
+fila 7 comencen les dades
+Columnes:
+   1: Nom de la comunitat
+   2: Codi de Provincia
+   3: Nom de la Provincia
+   4: Codi de Municipi
+   5: Nom de Municipi
+   6: Població
+   7: Número de meses
+   8: Total del cens electoral
+   9: Total de vots
+   10: Vots vàlids
+   11: Vots a candidatures
+   12: Vots en blanc
+   13: Vots nuls
+   14: shee.max_column (partits polítics)
+
+"""
+for i in range(7,100):
+    print (i, sheet.cell(row=i,column=4).value
+            , sheet.cell(row=i,column=5).value )
+```
+
