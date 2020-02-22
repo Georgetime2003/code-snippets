@@ -4,63 +4,103 @@ Codi molt simple per veure les funcions bàsiques de connexió a un SGBD MySQL i
 Els exemples estan contextualitzats a la BD rrhh.
 
 Podeu trobar més informació:
-- Instal·lació: https://dev.mysql.com/doc/connector-python/en/connector-python-installation.html
-- Exemples: https://dev.mysql.com/doc/connector-python/en/connector-python-examples.html
+- Instal·lació: https://dev.mysql.com/doc/connector-j/8.0/en/connector-j-installing.html
+- Exemples: https://dev.mysql.com/doc/connector-j/8.0/en/connector-j-examples.html
+
+Cal afegir la llibreria mysql-connector-java-8.0.19.jar de la carpeta libs/mysql o descarregar-les del web oficial.
 
 **INSERT**
-```python
+```java
+import java.sql.*;
+import java.util.Calendar;
 
-import mysql.connector
-import datetime
+try {
+	Class.forName("com.mysql.cj.jdbc.Driver");
 
-cnx = mysql.connector.connect(host='127.0.0.1',user='usuari',password='paraulapas', database='rrhh')
-cursor = cnx.cursor()
+	Connection con=DriverManager.getConnection("jdbc:mysql://<IP>:3306/rrhh","usuari","paraulapas");
 
-avui = datetime.datetime.now().date()
-#dema = datetime.now().date() + timedelta(days=1)
-#date(1977, 6, 14)
 
-stm_insert_empleat = ("INSERT INTO empleats "
-            "(empleat_id, nom,cognoms,email,data_contractacio,feina_codi,salari) "
-            "VALUES (%s, %s, %s, %s, %s, %s, %s)")
-dades_empleat = (500,'Geert', 'Vanderkelen','gvanderkelen@sapalomera.cat', tomorrow, 'IT_PROG',77.99)
+	//Preparem el Date
+	Calendar calendar = Calendar.getInstance();
+	java.sql.Date startDate = new java.sql.Date(calendar.getTime().getTime());
 
-# Executem l'INSERT
-cursor.execute(insert_empleat, data_employee)
-# Si la taula tenia un valor autoincremental aquest es pot recollir mitjançant lastrowid o _last_insert_id.
-empleat_id = cursor.lastrowid    
-print(cursor._last_insert_id)
+	// the mysql insert statement
+	String query = " INSERT INTO empleats (empleat_id,nom,cognoms,email,telefon,data_contractacio,feina_codi,salari)"
+			+ " values (?, ?, ?, ?, ?, ?, ?, ?)";
 
-# Ens assegurem de realitzar un commit a la BD
-cnx.commit()
-#allibarem recursos
-cursor.close()
-cnx.close()
+	// create the mysql insert preparedstatement
+	PreparedStatement preparedStmt = con.prepareStatement(query);
+	preparedStmt.setInt    (1, 300);
+	preparedStmt.setString (2, "Pere");
+	preparedStmt.setString (3, "Pi");
+	preparedStmt.setString (4, "perepi@sapalomera.cat");
+	preparedStmt.setString (5, "972350909");
+	preparedStmt.setDate   (6, startDate);
+	preparedStmt.setString (7, "IT_PROG");
+	preparedStmt.setFloat  (8, 5000.12f);
+
+	// execute the preparedstatement
+	preparedStmt.execute();
+
+	//Tanquem la connexió
+	con.close();
+}
+catch(Exception e){ 
+	System.out.println(e);
+}
 ```
 
 **SELECT/QUERY**
-```python
+```java
 
-import mysql.connector
-import datetime
+import java.sql.*;
+import java.util.Calendar;
 
-cnx = mysql.connector.connect(host='127.0.0.1',user='usuari',password='paraulapas', database='rrhh')
-cursor = cnx.cursor()
+try {
+	Class.forName("com.mysql.cj.jdbc.Driver");
 
-query = ("SELECT empleat_id,nom,cognoms,data_contractacio 
-         "   FROM empleats "
-         "WHERE data_contractacio BETWEEN %s AND %s")
+	Connection con=DriverManager.getConnection("jdbc:mysql://<IP>:3306/rrhh","usuari","paraulapas");
+            
+	//SENTÈNCIA SELECT            
+	//Preparem una sentència amb paràmetres.
+	String query = "SELECT * " + 
+			" FROM empleats " +
+			"WHERE data_contractacio BETWEEN ? AND ?";
+	PreparedStatement preparedStmt = con.prepareStatement(query);
 
-inici = datetime.date(1990, 1, 1)
-fi = datetime.date(2016, 12, 31)
+	//Preparem les dates
+	Calendar cDataInici = Calendar.getInstance();
+	cDataInici.add(Calendar.YEAR, -50);
+	
+	Calendar cDataFi = Calendar.getInstance();
+	cDataFi.add(Calendar.DATE,1);
+	
+	java.sql.Date dataInici = new java.sql.Date(cDataInici.getTime().getTime());
+	java.sql.Date dataFi = new java.sql.Date(cDataFi.getTime().getTime());
+	
+	preparedStmt.setDate(1,dataInici);
+	preparedStmt.setDate(2,dataFi);
+	
+	ResultSet rs = preparedStmt.executeQuery();
+	
+	/*
+	Sentència sense paràmetres.
+	Statement stmt=con.createStatement();
+	ResultSet rs=stmt.executeQuery("SELECT * FROM empleats");
+	*/
+	/* while(rs.next()) Obtenir els valors per índex de columnes.
+		System.out.println(rs.getInt(1)+"  "+rs.getString(2)+"  "+rs.getString(3));*/
 
-cursor.execute(query, (inici, fi))
-
-for (e_id, e_nom, e_cognoms, e_data_contractacio) in cursor:
-    print("{} - {}, {} va ser contractat el {:%d %b %Y}".format(e_id,e_nom,e_cognoms,e_data_contractacio))
-
-cursor.close()
-cnx.close()
+	while(rs.next()) {
+		System.out.println(rs.getInt("empleat_id") +
+				"  " + rs.getString("nom") + 
+				"  " + rs.getDate("data_contractacio"));
+	}
+	con.close();
+}
+catch(Exception e){ 
+	System.out.println(e);}
+}
     
 ```
 #### Descomprimir un fitxer comprimit .zip
