@@ -125,46 +125,95 @@ public static void main(String[] args) {
 #### Llegir un fitxer .xls
 Exemple de lectura d'un fixer XLS. l'exemple està basat en el fitxer que es troba dins d'algun dels fitxers .zip de `<Resultados Eleccions Generales - 02_199306_1.zip>` : <https://github.com/robertventura/databases/tree/master/db_eleccions_generals/data/resultats_x_municipi>
 
+Cal afegir les llibreries de la carpeta libs/poi o descarregar-les del web oficial.
+
 Podeu trobar més informació a:
-- https://www.datacamp.com/community/tutorials/python-excel-tutorial
-- Documentació oficial de openpyxl https://openpyxl.readthedocs.io/en/stable/- 
-- Documentació oficial de Pandas https://pandas.pydata.org/docs/
+- https://poi.apache.org/
+- https://mkyong.com/java/apache-poi-reading-and-writing-excel-file-in-java/ 
 
-```python
-import os
-import pandas as pd # pip install pandas / pip install xlrd
-import openpyxl as xl
+```java
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-#Tractar un fitxer Excel
-dirActual = os.path.dirname(__file__)
-nomFitxerXls = "02_201904_1.xlsx"
-pathFitxerXls = os.path.join(dirActual,nomFitxerXls)
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Iterator;
 
-wb = xl.load_workbook(pathFitxerXls, read_only=True)
-sheet = wb.get_sheet_by_name("Municipios")
-#print (sheet.max_row) #retorna la quantiat màxima de files
-#print (sheet.max_column) #retorna la quantitat màixma de columnes
-"""
-fila 7 comencen les dades
-Columnes:
-   1: Nom de la comunitat
-   2: Codi de Provincia
-   3: Nom de la Provincia
-   4: Codi de Municipi
-   5: Nom de Municipi
-   6: Població
-   7: Número de meses
-   8: Total del cens electoral
-   9: Total de vots
-   10: Vots vàlids
-   11: Vots a candidatures
-   12: Vots en blanc
-   13: Vots nuls
-   14: shee.max_column (partits polítics)
+try {
 
-"""
-for i in range(7,100):
-    print (i, sheet.cell(row=i,column=4).value
-            , sheet.cell(row=i,column=5).value )
+            //Obtenim el directori actual
+            Path pathActual = Paths.get(System.getProperty("user.dir"));
+
+            //Concatenem el directori actual amb un subdirectori "dades" i afegim el fitxer "03021911.DAT"
+            String nomFitxer = "02_201904_1.xlsx";
+
+            Path pathFitxer = Paths.get(pathActual.toString(), "dades",nomFitxer );
+
+            FileInputStream excelFile = new FileInputStream(new File(pathFitxer.toString()));
+            Workbook workbook = new XSSFWorkbook(excelFile);
+            Sheet fulla = workbook.getSheetAt(0); // Obtenim la primera fulla
+
+            /*
+            fila 7 comencen les dades
+            Columnes:
+               1: Nom de la comunitat
+               2: Codi de Provincia
+               3: Nom de la Provincia
+               4: Codi de Municipi
+               5: Nom de Municipi
+               6: Població
+               7: Número de meses
+               8: Total del cens electoral
+               9: Total de vots
+               10: Vots vàlids
+               11: Vots a candidatures
+               12: Vots en blanc
+               13: Vots nuls
+               14: shee.max_column (partits polítics)
+            */
+
+            //Recorrem  97 files de la fulla
+            for(int i = 7; i<100; i++) {
+                Row fila = fulla.getRow(i);
+                //Imprimim els valors de la columna 4 i 5
+                Cell cela = fila.getCell(3);
+                System.out.print(cela.getNumericCellValue() + "--");
+
+                System.out.println(fila.getCell(4).getStringCellValue() + "--");                
+            }
+
+            /*
+            -- Construïm un interador sobre la fulla.            
+            */
+            Iterator<Row> rowIterator = fulla.iterator();
+
+             // Bucle per recòrrer totes les files i columnes de la fulla
+            while(rowIterator.hasNext()) {
+
+                Row filaActual  = rowIterator.next();
+
+                //Construïm un interador per les columnes.
+                Iterator<Cell> cellIterator = filaActual.iterator();                
+                while (cellIterator.hasNext()) {
+
+                    Cell celaActual = cellIterator.next();
+
+                    if (celaActual.getCellType() == CellType.STRING) {
+                        System.out.print(celaActual.getStringCellValue() + "--");
+                    } else if (celaActual.getCellType() == CellType.NUMERIC) {
+                        System.out.print(celaActual.getNumericCellValue() + "--");
+                    }
+
+                }
+                System.out.println();
+            }
+
+            } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            } catch (IOException e) {
+            e.printStackTrace();
+            }
 ```
 
