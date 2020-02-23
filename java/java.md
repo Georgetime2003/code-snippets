@@ -135,11 +135,10 @@ try (ZipArchiveInputStream fitxerZip = new ZipArchiveInputStream(
 
 		File file = new File(Paths.get(pathActual.toString(), unzipDir, entrada.getName()).toString());
 		System.out.println("Unzipping - " + file);
-		// Create directory before streaming files.
-		//String dir = file.toPath().toString().substring(0, file.toPath().toString().lastIndexOf("\\"));
+		
 		Files.createDirectories(pathUnzipDir);
 
-		// Stream file content
+		// copiem el contingu del fitxer.
 		IOUtils.copy(fitxerZip, new FileOutputStream(file));
 
 	}
