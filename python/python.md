@@ -26,7 +26,7 @@ stm_insert_empleat = ("INSERT INTO empleats "
 dades_empleat = (500,'Geert', 'Vanderkelen','gvanderkelen@sapalomera.cat', tomorrow, 'IT_PROG',77.99)
 
 # Executem l'INSERT
-cursor.execute(insert_empleat, data_employee)
+cursor.execute(stm_insert_empleat, dades_empleat)
 # Si la taula tenia un valor autoincremental aquest es pot recollir mitjançant lastrowid o _last_insert_id.
 empleat_id = cursor.lastrowid    
 print(cursor._last_insert_id)
